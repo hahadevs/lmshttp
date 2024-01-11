@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<style>
+</style>
+<a href="/libadmin/login/" class="text-blue-300 underline fixed right-4 top-4"><div>login as Librarian ?</div></a>
+<body class="flex justify-center items-center min-h-screen min-w-screen">
+
+    <form action="" class="flex justify-center items-center flex-col [&>div>input]:border-2 [&>div>*]:m-2">
+        <div><h1 class="text-2xl">LOGIN</h1></div>
+        <div>
+            <label for="">Username</label>
+            <input type="text" name="username" id="username">
+        </div>
+        <div>
+            <label for="">Password</label>
+            <input type="text" name="password" id="password">
+        </div>
+        <button type="submit" class="border mt-3 py-2 px-4 rounded-md bg-gray-500 text-white">Submit</button>
+        <a href="/user/signup/" class="mt-4 text-blue-600 underline">Singup ?</a>
+    </form>
+</body>
+</html>

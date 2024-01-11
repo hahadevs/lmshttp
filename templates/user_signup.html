@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Signup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<style>
+</style>
+<body class="flex justify-center items-center min-h-screen min-w-screen">
+
+    <form action="" method="POST" class="flex justify-center items-center flex-col [&>div>input]:border-2 [&>div>*]:m-2">
+        <div><h1 class="text-2xl">Signup at LIBRARY </h1></div>
+        <div>
+            <label for="">Firstname</label>
+            <input type="text" name="firstname" id="firstname">
+        </div>
+        <div>
+            <label for="">Lastname</label>
+            <input type="text" name="lastname" id="lastname">
+        </div>
+        <div>
+            <label for="">&nbsp; &nbsp; &nbsp; Email &nbsp; &nbsp; </label>
+            <input type="email" name="email" id="email">
+        </div>
+        <div>
+            <label for="">Password</label>
+            <input type="text" name="password" id="password">
+        </div>
+        <button type="submit" class="border mt-3 py-2 px-4 rounded-md bg-gray-500 text-white">Submit</button>
+        <a href="/user/login/" class="mt-4 text-blue-600 underline">Login ?</a>
+    </form>
+</body>
+</html>
