@@ -6,5 +6,8 @@ if __name__ == "__main__":
     db = MongoClient(url)
     database = db['LMS']
     collection = database['users_collection']
-    for key in collection.find():
-        print(key)
+    # collection.insert_one({"email2@gamil.com":"sample inesrt"})
+    # print(collection)
+    # for key in collection.find():
+    #     print(key)
+

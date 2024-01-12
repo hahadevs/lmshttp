@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BooksManager</title>
+</head>
+<style>
+    *{
+        box-sizing: border-box;
+        margin:0;
+        padding:0;
+    }
+    body{
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    form{
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap:20px;
+    }
+    h2{
+        color: rgb(37, 80, 117);
+        font-size: 2.3rem;
+        margin: 0 0 20px 0;
+    }
+    form>div{
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+        gap:10px;
+    }
+    form>div>div{
+        margin-bottom: 6px;
+    }
+    form>div>div>div{
+        font-size: 0.8rem;
+        margin-bottom:3px;
+        margin-left: 10px;
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    input{
+        width: 60vw;
+        max-width: 1000px;
+        min-width: 400px;
+        font-size: medium;
+        padding: 10px 20px;
+        border-radius: 10px;
+        border:3px solid rgba(255, 192, 203, 0.712);
+        outline: none;
+        box-shadow: 0 2px 6px 1px rgba(255, 192, 203, 0.541);
+        transition: all 400 ease;
+        &:focus{
+            border-color: rgb(96, 96, 177);
+            
+        }
+    }
+    button{
+        width: 60vw;
+        max-width: 1000px;
+        min-width: 400px;
+        margin-top: 10px;
+        padding:10px 20px ;
+        border-radius: 20px;
+        font-size: large;
+        transition: all 100ms ease-in;
+        font-weight: bold;
+        background-color: rgb(197, 131, 162);
+        color:rgba(255, 255, 255, 0.897);
+        box-shadow: 0 0 8px 1px gray;
+        &:hover{
+            box-shadow: 0 0 12px 2px gray;
+        }
+        &:active{
+            transform: scale(90%);
+        }
+    }
+    .deactivate{
+        transform: translateY(-160%);
+    }
+    .status-div{
+        position: fixed;
+        top:20px;
+        color:green;
+        border:2px solid ;
+        border-color: currentColor;
+        border-radius: 10px;
+        padding:10px 20px;
+        background-color: aliceblue;
+        box-shadow: 2px 2px 10px 1px rgba(146, 146, 146, 0.616);
+        animation:1s all ease;
+    }
+</style>
+<div class="status-div deactivate">Data Successfully uploaded</div>
+<body>
+    <form action="" id="form">
+        <h2>Add Book</h2>
+        <div>
+        <div>
+            <div for="">Title</div>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div>
+            <div for="">Author</div>
+            <input type="text" id="author" name="author" required>
+        </div>
+        <div>
+            <div for="">Quantity</div>
+            <input type="select" id="quantity" name="quantity" required>
+        </div>
+        <div>
+            <div for="">Genre</div>
+            <input type="text" id="genre" name="genre" required>
+        </div>
+        <div>
+            <div for="">ISDN </div>
+            <input type="number" required name="isdn" id="isdn">
+        </div>
+        <div>
+        </div>
+        </div>
+        <button type="button" onclick="validateForm()">Submit</button>
+    </form>
+</body>
+<script>
+    var status_div = document.getElementById('status-div');
+    function validateForm(){
+        let title = document.getElementById('title').value;
+        let author = document.getElementById('author').value;
+        let quantity = document.getElementById('quantity').value;
+        let genre = document.getElementById('').value;
+        let isdn = document.getElementById('isdn').value;
+        let data = {
+            'title':title,
+            'author':author,
+            'quantity':quantity,
+            'genre':genre,
+            'isdn':isdn
+        };
+        addBookFetch(data);
+
+    }
+    async function addBookFetch(data){
+        status_div.innerHTML = "Adding book to library .. ";
+        status_div.style.color = "yellow";
+        
+        try{
+        response = await fetch(
+            url='/api/libadmin/addbook/',
+                {
+                    method:"POST",
+                    credentials:'same-origin',
+                    headers:{
+                        "Accept":"application/json",
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify(data)
+                }
+            );
+        response = response.json();
+        if(response["status"] == "ok"){
+            status_div.innerHTML = "Book Successfully Added to Library.";
+            status_div.color = "lightgreen";
+        }
+        else{
+            status_div.innerHTML == "Something went wrong !";
+            status_div.style.color == "red";
+            await new Promise(setTimeout(r),9000);
+            status_div.classList.add("deactivate");
+        }
+        }
+        catch(e){
+        console.log(e);
+        status_div.innerHTML = e;
+        status_div.style.color = "red";
+
+
+    }
+
+
+    };
+</script>
+</html>

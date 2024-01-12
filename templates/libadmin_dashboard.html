@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- tailwindcdn  -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<button class="fixed right-4 top-2 bg-pink-600 shadow-md shadow-pink-300 py-1 px-2 rounded-md text-white active:scale-90 font-bold text-sm transition">Logout</button>
+<body class="min-h-screen min-w-screen flex flex-col [&>section]:w-full [&>section]:m-10 [&>section>h2]:text-2xl [&>section>h2]:text-gray-700 font-bold [&>section>h2]:border-b [&>section>h2]:my-4 [&>section>h2]:pb-1">
+    <section class=""> 
+        <h2>Available Books</h2>
+            <table>
+                <thead>
+                    <tr class="[&>th]:text-gray-700 [&>th]:px-3">
+                        <th>ISDN</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Quantiy</th>
+                        <th>Status</th>
+                        <th>Genre</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm text-gray-500 [&>tr>td]:font-thin [&>tr>td]:m-2 [&>tr>td]:border [&>tr>td]:text-center [&>tr>td]:px-2 [&>tr>td]:py-1">
+                    {% books_html %}
+                </tbody>
+            </table>
+        </section>
+        <a href="/libadmin/bookmanager/" class="w-[100px] text-sm px-4 py-2 text-white text-pink-700 shadow-md shadow-pink-200 active:scale-90 rounded-lg mt-5 ml-5 transition">BOOK MANAGER</a>
+    <section>
+        <h2>Library Members</h2>
+        <table>
+            <thead>
+                <tr class="[&>th]:text-gray-700 [&>th]:px-3">
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Email</th>
+                    <th>Books Borrow</th>
+                </tr>
+            </thead>
+            <tbody class="text-sm text-gray-500 [&>tr>td]:font-thin [&>tr>td]:m-2 [&>tr>td]:border [&>tr>td]:text-center [&>tr>td]:px-2 [&>tr>td]:py-1">
+                {% users_html %}
+            </tbody>
+        </table>
+    </section>
+    <section>
+        <h2>Transactions</h2>
+        <table>
+            <thead>
+                <tr class="[&>th]:text-gray-700 [&>th]:px-3">
+                    <th>Transaction ID</th>
+                    <th>Username</th>
+                    <th>BookID</th>
+                    <th>DateTime</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody class="text-sm text-gray-500 [&>tr>td]:font-thin [&>tr>td]:m-2 [&>tr>td]:border [&>tr>td]:text-center [&>tr>td]:px-2 [&>tr>td]:py-1">
+                {% transactions_html %}
+            </tbody>
+        </table>
+    </section>
+</body>
+</html>

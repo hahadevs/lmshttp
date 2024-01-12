@@ -6,6 +6,7 @@ from mongo import MongoDatabase
 import cgi
 from urllib.parse import parse_qs
 import json
+from uuid import uuid4
 
 class LMSRequestHandler(BaseHTTPRequestHandler):
     def __init__(self,*args,**kwargs):
@@ -32,29 +33,51 @@ class LMSRequestHandler(BaseHTTPRequestHandler):
         return main
     def do_GET(self):
         self.path = self.path.removesuffix("/")
-        if self.path == "/":
-
-            self.render('user_login.html')
-        
-        elif self.path == "/libadmin/login":
-
-            self.render('libadmin_login.html')
-
-        elif self.path == '/libadmin/dashboard/':
-
-            self.render('libadmin_dashboard.html')
-        
-        elif self.path == '/libadmin/bookmanager':
-
-            self.render('book_management.html')
-
-        elif self.path == '/user/signup' :
+        """
+        USER GET REQUEST HANDLER
+        """
+        if self.path == '/user/signup' :
             
             self.render('user_signup.html')
-
+            return
+        
         elif self.path == '/user/login':
 
             self.render('user_login.html')
+            return 
+        
+        elif self.path == '/user/book-browser':
+            user_email = is_session_authenticated(self.headers)
+            if user_email:
+                self.render('book_browser.html')
+            else:
+                self.redirect('/user/login')
+            return
+        
+        """
+        ADMIN GET REQUEST HANDLER
+        """
+        if self.path == '/libadmin/dashboard':
+            admin_email = is_session_authenticated(self.headers)
+            context = {}
+            context['books_html'] = create_books_html(self.db.get_list_books())
+            context['users_html'] = create_users_html(self.db.get_list_users())
+            context['transactions_html'] = create_transactions_html(self.db.get_list_transactions())
+            context['email'] = admin_email
+            self.render('libadmin_dashboard.html',context=context)
+
+        elif self.path == '/libadmin/bookmanager':
+            if is_session_authenticated(self.headers):
+                
+                self.render('libadmin_bookmanager.html')
+
+            # else render Invalid url response 
+            else:
+                self.render_html("<html><body><h1>Please enter a Valid URL </h1></body></html>")
+
+        elif self.path == "/libadmin/login":
+
+            self.render('libadmin_login.html')
 
         else:
             self.render_html("<html><body><h1>Please enter a Valid URL </h1></body></html>")
@@ -62,11 +85,39 @@ class LMSRequestHandler(BaseHTTPRequestHandler):
     @_POST
     def do_POST(self):
         self.path = self.path.removesuffix("/")
+
+        """
+        User POST REQUEST HANDLER
+        """
         if self.path == '/user/signup':
             self.db.create_user(self.POST)
-            self.render("user_login.html")
-        # elif self.path == /user/login/'
+            self.redirect('/user/login/')
+            return
+        elif self.path == '/user/login':
+            user = self.db.is_user_exists(self.POST)
+            if user is not None:
+                new_sessionid = str(uuid4())
+                add_session(email=user['email'],sessionid=new_sessionid)
+                self.redirect('/user/book-browser/',cookies={'sessionid':new_sessionid})
+            else:
+                self.render("user_login.html",alert="User Not Found !")
+            return
+        """
+        Admin POST REQUEST HANDLER
+        """
+        if self.path == '/libadmin/login':
+            admin = self.db.is_libadmin(self.POST)
+            if admin:
+                new_sessionid = str(uuid4())
+                add_session(admin['email'],new_sessionid)
+                self.redirect('/libadmin/dashboard/',cookies={'sessionid':new_sessionid})
+            else:
+                self.render('libadmin_login.html',alert="Wrong Credentials !")
 
+
+        else:
+            self.send_response_only(400)
+            self.end_headers()
     
 
     def send_json_response(self,response_dict:dict=None):
