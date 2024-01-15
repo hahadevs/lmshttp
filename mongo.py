@@ -1,9 +1,9 @@
 from pymongo import MongoClient
 from datetime import datetime
+from bson import ObjectId
 class MongoDatabase:
     def __init__(self):
-        self.conn = False
-    
+        self.conn = False 
     def connect(self):
         with open('mongo.conf','r') as conf_file:
             conn_url = conf_file.read()
@@ -22,15 +22,47 @@ class MongoDatabase:
             'current_borrow':[]
         }
         self.users_collection.insert_one(new_user,bypass_document_validation=False,comment=None,session=None)
-    def create_transaction(self,username,bookid,action) -> str:
+    def create_transaction(self,username:str,bookid:str,action:str) -> str:
+        """Updating Books Collection to decrement book by 1"""
+        if action == "borrow": inc = -1
+        elif action == "return" : inc = +1
+        else:raise Exception("Invalid action value for transaction ")
+        self.books_collection.update_one({"_id":ObjectId(bookid)},{"$inc":{"quantity":inc}})
+        """Updating Users bag with new book"""
+        mybag = self.users_collection.find_one({"email":username})['mybag']
+        if action == 'borrow':
+            mybag.append(bookid)
+        elif action == 'return':
+            mybag.remove(bookid)
+
+        """Creating a transaction"""
         details = {
             'username':username,
             'bookid':bookid,
             'date':str(datetime.now().date()),
             'action':action
         }
+        self.users_collection.update_one({"email":username},{"$set":{"mybag":mybag}})
         transaction_obj = self.records_collection.insert_one(details)
         return transaction_obj.inserted_id
+    def add_book(self,details_dict:dict):
+        book_details = {
+            'title':details_dict['title'],
+            'author':details_dict['author'],
+            'isdn':details_dict['isdn'],
+            'quantity':int(details_dict['quantity']),
+            'genre':[],
+            'status':int(details_dict['status'])
+        }
+        self.books_collection.insert_one(book_details)
+    def get_mybag(self,user_email:str)->list:
+        mybag = self.users_collection.find_one({"email":user_email})['mybag']
+        list_mybag_dict = []
+        for book_id in mybag:
+            list_mybag_dict.append(self.books_collection.find_one({"_id":ObjectId(book_id)}))
+        return list_mybag_dict
+    def get_book_dict(self,book_id:str):
+        return self.books_collection.find_one({"_id":ObjectId(book_id)})
     def get_list_transactions(self,filter:dict=None) -> list:
         if filter:
             return [record for record in self.records_collection.find(filter)]
@@ -52,6 +84,12 @@ class MongoDatabase:
         print(found_list)
         if len(found_list) == 1 :
             return found_list[0]
+    def delete_book(self,req_dict):
+        _id = ObjectId(req_dict["_id"])
+        # self.books_collection.delete_one({"_id":_id})
+        for book in self.books_collection.find({"_id":_id}):
+            print("book found and testing purpose delete : ",book["_id"])
+
     def __del__(self):
         if self.conn:
             self.conn.close()

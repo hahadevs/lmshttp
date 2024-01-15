@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
-    <title>BorrowBook</title>
+    <title>ReturnBook</title>
 </head>
 <style>
     .go-back {
@@ -104,13 +104,13 @@
             <div></div>
             <div></div>
             <div>
-                <input id="check" type="checkbox">Yes I want to borrow this book.
+                <input id="check" type="checkbox">Yes I want to return this book.
             </div>
-            <input type="hidden" name="action" value="borrow">
+            <input type="hidden" name="action" value="return">
             <input type="hidden" name="_id" value="{% _id %}">
-            <button type="button">Borrow</button>
+            <button type="button">Return</button>
             <div class="note">
-                This book will be issued to
+                This book is returned by 
                 <span>{% user_email %}</span> 
             </div>
         </form>

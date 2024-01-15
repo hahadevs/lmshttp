@@ -1,33 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <!-- tailwindcdn  -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<button class="fixed right-4 top-2 bg-pink-600 shadow-md shadow-pink-300 py-1 px-2 rounded-md text-white active:scale-90 font-bold text-sm transition">Logout</button>
-<body class="min-h-screen min-w-screen flex flex-col [&>section]:w-full [&>section]:m-10 [&>section>h2]:text-2xl [&>section>h2]:text-gray-700 font-bold [&>section>h2]:border-b [&>section>h2]:my-4 [&>section>h2]:pb-1">
-    <section class=""> 
+<style>
+    .td-div>span>button {
+        border: 1px solid gray;
+        padding: 2px 4px;
+    }
+    .deactivate {
+        transform: translateY(-160%);
+    }
+
+    .notify {
+        position: fixed;
+        top: 20px;
+        color: darkslategray;
+        border: 2px solid;
+        border-color: green;
+        border-radius: 10px;
+        padding: 10px 20px;
+        background-color: rgba(180, 180, 180, 0.205);
+        box-shadow: 2px 2px 10px 1px rgba(146, 146, 146, 0.616);
+        animation: 1s all ease;
+        /* transform: translateY(100%); */
+    }
+</style>
+<div id="status-div" class="notify deactivate">Data Successfully uploaded</div>
+<button
+    class="fixed right-4 top-2 bg-pink-600 shadow-md shadow-pink-300 py-1 px-2 rounded-md text-white active:scale-90 font-bold text-sm transition" onclick="logout();">Logout</button>
+<body
+    class="min-h-screen min-w-screen flex flex-col [&>section]:w-full [&>section]:m-10 [&>section>h2]:text-2xl [&>section>h2]:text-gray-700 font-bold [&>section>h2]:border-b [&>section>h2]:my-4 [&>section>h2]:pb-1">
+    <section class="">
         <h2>Available Books</h2>
-            <table>
-                <thead>
-                    <tr class="[&>th]:text-gray-700 [&>th]:px-3">
-                        <th>ISDN</th>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>Quantiy</th>
-                        <th>Status</th>
-                        <th>Genre</th>
-                    </tr>
-                </thead>
-                <tbody class="text-sm text-gray-500 [&>tr>td]:font-thin [&>tr>td]:m-2 [&>tr>td]:border [&>tr>td]:text-center [&>tr>td]:px-2 [&>tr>td]:py-1">
-                    {% books_html %}
-                </tbody>
-            </table>
-        </section>
-        <a href="/libadmin/bookmanager/" class="w-[100px] text-sm px-4 py-2 text-white text-pink-700 shadow-md shadow-pink-200 active:scale-90 rounded-lg mt-5 ml-5 transition">BOOK MANAGER</a>
+        <table>
+            <thead>
+                <tr class="[&>th]:text-gray-700 [&>th]:px-3">
+                    <th>ISDN</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Quantiy</th>
+                    <th>Status</th>
+                    <th>Genre</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody
+                class="text-sm text-gray-500 [&>tr>td]:font-thin [&>tr>td]:m-2 [&>tr>td]:border [&>tr>td]:text-center [&>tr>td]:px-2 [&>tr>td]:py-1">
+                {% books_html %}
+            </tbody>
+        </table>
+    </section>
+    <a href="/libadmin/addbook/"
+        class="w-[100px] text-sm px-4 py-2 text-pink-700 shadow-md shadow-pink-200 active:scale-90 rounded-lg mt-5 ml-5 transition">ADD
+        BOOK</a>
     <section>
         <h2>Library Members</h2>
         <table>
@@ -39,7 +71,8 @@
                     <th>Books Borrow</th>
                 </tr>
             </thead>
-            <tbody class="text-sm text-gray-500 [&>tr>td]:font-thin [&>tr>td]:m-2 [&>tr>td]:border [&>tr>td]:text-center [&>tr>td]:px-2 [&>tr>td]:py-1">
+            <tbody
+                class="text-sm text-gray-500 [&>tr>td]:font-thin [&>tr>td]:m-2 [&>tr>td]:border [&>tr>td]:text-center [&>tr>td]:px-2 [&>tr>td]:py-1">
                 {% users_html %}
             </tbody>
         </table>
@@ -56,10 +89,56 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody class="text-sm text-gray-500 [&>tr>td]:font-thin [&>tr>td]:m-2 [&>tr>td]:border [&>tr>td]:text-center [&>tr>td]:px-2 [&>tr>td]:py-1">
+            <tbody
+                class="text-sm text-gray-500 [&>tr>td]:font-thin [&>tr>td]:m-2 [&>tr>td]:border [&>tr>td]:text-center [&>tr>td]:px-2 [&>tr>td]:py-1">
                 {% transactions_html %}
             </tbody>
         </table>
     </section>
 </body>
+<script>
+    var status_div = document.getElementById("status-div");
+    async function deleteBook(_id) {
+        status_div.innerHTML = "Processing ... ";
+        status_div.style.borderColor = "orange";
+        status_div.classList.remove("deactivate");
+        let req_data = {
+            "_id": _id
+        }
+        try{
+            let url = "/api/libadmin/dashboard/delete/"
+            response = await fetch(
+            url = url,
+            {
+                method: "DELETE",
+                credentials: "same-origin",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(req_data)
+            }
+        );
+        response = await response.json();
+        if(response["status"]=="ok"){
+            status_div.style.borderColor = "green";
+            status_div.innerHTML = "Book Successfully Deleted.";
+            await new Promise(r => setTimeout(r, 3000));
+            status_div.classList.add("deactivate");
+        }
+        }
+        catch(e){
+            status_div.style.borderColor = "red";
+            status_div.innerHTML = e;
+            await new Promise(r => setTimeout(r,5000));
+            status_div.classList.add("deactivate");
+        }
+
+    };
+    function logout(){
+        document.cookie = "sessionid=None; max-age=0;path=/";
+        window.location.href = "/libadmin/login/";
+    };
+</script>
+
 </html>

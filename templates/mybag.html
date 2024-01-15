@@ -109,27 +109,27 @@
     <nav>
         <ul>
             <a href="/user/mybag/">Home</a>
-            <a href="/user/mybag/">Mybag</a>
+            <a href="/user/book-browser/">Browse Books</a>
             <a onclick="logout();">Logout</a>
         </ul>
         <span style="color: rgb(68, 77, 87);"><span style="font-size: 10px; font-weight: bold;color: slategrey;">Hellow</span> Username</span>
     </nav>
     <main>
-        <h1 class="title">Books In Library</h1>
+        <h1 class="title">Books In My Bag</h1>
         <script>
             document.getElementsByTagName("h1")[0].style.marginTop= document.getElementsByTagName("nav")[0].clientHeight+"px";
         </script>
         <div class="container">
-            {% books_html %}
+            {% bagbooks_html %}
          </div> <!-- container div end -->
 
     </main>
 
-    
 </body>
 <script>
     function borrowBook(id){
-        window.location.href = "/user/book-browser/borrow-book/"+id;
+        window.localStorage.setItem("borrowBook_id",id);
+        window.location.href = "/user/book-browser/return-book/"+id;
     }
     function logout(){
         document.cookie = "sessionid=None; max-age=0;path=/";
