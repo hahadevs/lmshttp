@@ -8,7 +8,7 @@ def create_browse_books_html(list_of_books_dict:list)->str:
     for book in list_of_books_dict:
         book_id = str(book['_id'])
         if book['status'] == 0:
-            html += """<div class=card" onclick="" style="cursor:default;" >"""
+            html += """<div class="card" onclick="" style="cursor:default;" >"""
         elif book['status'] == 1:
             html += f"""<div class="card" onclick="borrowBook('{book_id}');">"""
         html += f"""
@@ -63,7 +63,7 @@ def create_books_html(list_of_books_dict:list)->str:
     html = ""
     for book in list_of_books_dict:
         book_id = str(book['_id'])
-        html += "<tr>"
+        html += f"<tr id= \"{book_id}\">"
         html += f"<td>{book['isdn']}</td>"
         html += f"<td>{book['title']}</td>"
         html += f"<td>{book['author']}</td>"

@@ -105,7 +105,16 @@ class LMSRequestHandler(BaseHTTPRequestHandler):
                 self.render('libadmin_dashboard.html',context=context)
             else:
                 self.redirect("/libadmin/login/")
-
+        elif self.path.startswith("/libadmin/dashboard/edit-book/"):
+            user_email = is_session_authenticated(self.headers)
+            if user_email:
+                _id = self.path.split("/")[-1]
+                context = {}
+                book_dict = self.db.get_book_dict(book_id=_id)
+                for key in book_dict :context[key] = book_dict[key]
+                self.render('libadmin_editbook.html',context=context)
+            else:self.redirect('/libadmin/login/')
+            return
         elif self.path == '/libadmin/addbook':
             if is_session_authenticated(self.headers):
                 
@@ -167,6 +176,17 @@ class LMSRequestHandler(BaseHTTPRequestHandler):
         else:
             self.send_response_only(400)
             self.end_headers()
+    @_POST
+    def do_UPDATE(self):
+        self.path = self.path.removesuffix('/')
+        if self.path == '/api/libadmin/dashboard/edit-book':
+            user_email = is_session_authenticated(self.headers)
+            if user_email:
+                self.db.update_book(self.POST)
+                self.send_json_response({"status":"ok"})
+            else:
+                self.send_response_only(400)
+                self.end_headers()
     def do_DELETE(self):
         self.path = self.path.removesuffix('/')
         if self.path == '/api/libadmin/dashboard/delete':

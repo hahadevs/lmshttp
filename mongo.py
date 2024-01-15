@@ -19,7 +19,7 @@ class MongoDatabase:
             'firstname':user_dict['firstname'],
             'lastname':user_dict['lastname'],
             'password':user_dict['password'],
-            'current_borrow':[]
+            'mybag':[]
         }
         self.users_collection.insert_one(new_user,bypass_document_validation=False,comment=None,session=None)
     def create_transaction(self,username:str,bookid:str,action:str) -> str:
@@ -79,6 +79,15 @@ class MongoDatabase:
         found_list = list(self.users_collection.find({"email":credentials['username'],'password':credentials['password']}))
         if len(found_list) == 1:
             return found_list[0]
+    def update_book(self,details:dict)->bool:
+        try:
+            self.books_collection.update_one({"_id":ObjectId(details['book_id'])},{"$set":{
+            "title":details['title'],
+            "author":details['author']
+            }})
+            return True
+        except:
+            return False
     def is_libadmin(self,credentials) -> dict:
         found_list = list(self.__admin_auth.find({"email":credentials['username'],'password':credentials['password']}))
         print(found_list)
@@ -86,10 +95,8 @@ class MongoDatabase:
             return found_list[0]
     def delete_book(self,req_dict):
         _id = ObjectId(req_dict["_id"])
-        # self.books_collection.delete_one({"_id":_id})
-        for book in self.books_collection.find({"_id":_id}):
-            print("book found and testing purpose delete : ",book["_id"])
-
+        self.books_collection.delete_one({"_id":_id})
+        print("Book Delted : ",_id)
     def __del__(self):
         if self.conn:
             self.conn.close()
